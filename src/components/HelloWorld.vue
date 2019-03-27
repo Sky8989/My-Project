@@ -1,4 +1,4 @@
-<template>
+<template xmlns:el-col="http://www.w3.org/1999/html">
 
   <div id="app">
 
@@ -73,7 +73,7 @@
 
                 <el-row :gutter="10" id = "5">
 
-                  <el-col :span="4" >ODR：<el-input-number controls-position="right" v-model="form.select6"  :step="0.01" max="1" > </el-input-number></el-col>
+                  <el-col :span="4" >ODR：<el-input-number controls-position="right" v-model="form.select6"  :step="0.01" > </el-input-number></el-col>
                   <el-col :span="4" >U8：<el-input-number controls-position="right" v-model="form.select7" > </el-input-number></el-col>
 
                 </el-row>
@@ -130,134 +130,50 @@
     <hr/>
     <br>
 
-    <el-row :gutter="10"  >
+    <!--产品相关联信息操作-->
+    <el-row :gutter="10"  name="productRel">
 
       <el-col :span="24" >
 
         <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick" style="height: auto;">
           <el-tab-pane label="图片" name="first">
-
-            <el-row :gutter="5" >
-             <!-- <el-col :span="2">
-
-              </el-col>-->
-
-              <el-col :span="20">
-
-                <el-col :span="3" name="imgType" >
-
-                      <el-button style="display: block; width: 130px">橱窗图</el-button>
-                      <el-button style="display: block;margin-left: 0px;width: 130px" >EBC</el-button>
-                      <el-button style="display: block;margin-left: 0px;width: 130px" >品牌推广图</el-button>
-                      <el-button style="display: block;margin-left: 0px;width: 130px" >实物图</el-button>
-                      <el-button style="display: block;margin-left: 0px;width: 130px" >包装图片</el-button>
-                      <el-button style="display: block;margin-left: 0px;width: 130px" >说明书图片</el-button>
-                      <el-button style="display: block;margin-left: 0px;width: 130px" >其他</el-button>
-
-                </el-col>
-
-                <el-col :span="16" name="imgList">
-                  <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
-                  <el-upload
-                    class="upload-demo"
-                    multiple :limit="5"
-                    action="https://jsonplaceholder.typicode.com/posts/"
-                    :on-preview="handlePreview"
-                    :on-remove="handleRemove"
-                    :file-list="fileList"
-                    list-type="picture-card" style="height: auto">
-
-                  </el-upload>
-
-                </el-col>
-
-              </el-col>
-
-              <el-col :span="4" name="option" style="padding: 230px 0px 0px 0px">
-                <el-button size="" type="primary">上传图片</el-button>
-                <el-button>下载</el-button>
-                <el-button>删除</el-button>
-              </el-col>
-
-
-            </el-row>
+           <!--引用 ImageUpload 组件 引用的名称小写多个字母用中划线分割(-)-->
+            <ImageUpload ref="image-upload"></ImageUpload>
 
           </el-tab-pane>
 
           <el-tab-pane label="文档" name="second">
-            <el-row :gutter="5" >
-              <!-- <el-col :span="2">
 
-               </el-col>-->
-
-              <el-col :span="20">
-
-                <el-col :span="4" name="docType" >
-
-                  <el-button style="display: block; width: 130px">产品listing文案</el-button>
-                  <el-button style="display: block;margin-left: 0px;width: 130px" >产品定义文档</el-button>
-                  <el-button style="display: block;margin-left: 0px;width: 130px" >认证文件</el-button>
-                  <el-button style="display: block;margin-left: 0px;width: 130px" >结构文件</el-button>
-                  <el-button style="display: block;margin-left: 0px;width: 130px" >立项资料</el-button>
-                  <el-button style="display: block;margin-left: 0px;width: 130px" >申述文件</el-button>
-                  <el-button style="display: block;margin-left: 0px;width: 130px" >其他</el-button>
-
-                </el-col>
-
-                <el-col :span="16" name="docList">
-                  <div slot="tip" class="el-upload__tip">只能上传jpg/png文件，且不超过500kb</div>
-                  <el-upload
-                    class="upload-demo"
-                    multiple :limit="5"
-                    action="https://jsonplaceholder.typicode.com/posts/"
-                    :on-preview="handlePreview"
-                    :on-remove="handleRemove"
-                    :file-list="fileList"
-                    list-type="picture" style="height: auto">
-                  </el-upload>
-
-                </el-col>
-
-              </el-col>
-
-
-              <el-col :span="4" name="option" style="padding: 230px 0px 0px 0px">
-                  <el-button>上传新文件</el-button>
-                  <el-button>下载</el-button>
-                  <el-button>删除</el-button>
-              </el-col>
-
-            </el-row>
+            <Document ref="document"></Document>
 
           </el-tab-pane>
+
           <el-tab-pane label="负责人列表" name="third">
-            <el-button style="float: left">新增</el-button>
-            <el-table border="true" style="width: 100%">
-              <el-table-column prop="date" label="国家" ></el-table-column>
-              <el-table-column prop="date" label="产品类型" ></el-table-column>
-              <el-table-column prop="date" label="ASIN" ></el-table-column>
-              <el-table-column prop="date" label="所属BU" ></el-table-column>
-              <el-table-column prop="date" label="运营组别" ></el-table-column>
-              <el-table-column prop="date" label="运营负责人" ></el-table-column>
-              <el-table-column prop="date" label="记录人" ></el-table-column>
-              <el-table-column prop="date" label="更新时间" ></el-table-column>
-              <el-table-column prop="date" label="备注" ></el-table-column>
-              <el-table-column prop="date" label="编辑" ></el-table-column>
-            </el-table>
+
+            <Principal ref="principal"></Principal>
 
           </el-tab-pane>
+
           <el-tab-pane label="listing事件记录" name="fourth">
+            <Listting ref="listting"></Listting>
 
           </el-tab-pane>
+
           <el-tab-pane label="供应商" name="5">
 
+
+
+
           </el-tab-pane>
+
           <el-tab-pane label="物流费用" name="6">
 
           </el-tab-pane>
+
           <el-tab-pane label="编码信息表" name="7">
 
           </el-tab-pane>
+
           <el-tab-pane label="其他" name="8">
 
           </el-tab-pane>
@@ -268,14 +184,7 @@
     </el-row>
 
 
-
-
   </div>
-
-
-
-
-
 
 </template>
 
@@ -286,11 +195,22 @@
 <script src="//unpkg.com/element-ui@2.6.0/lib/index.js"></script>
 
 
+
 <script>
+  //导入组件
+  import ImageUpload from './Image'
+  import Document from "./Document";
+  import Principal from "./Principal";
+  import Listting from "./Listting";
+
   export default {
   name: 'HelloWorld',
+    //注册组件
+    components: {Listting, Document, ImageUpload,Principal},
   data () {
     return {
+
+      formLabelWidth:'100px',
       activeName: 'first',
       border:true,
       dialogImageUrl: '',
@@ -308,20 +228,8 @@
         desc: '',
         bu:"",
       },
-      fileList: [{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'},
-        {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'},
-        {name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'},
-        {name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'},
-        {name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'},
-        {name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'},
-        {name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'},
-        {name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'},
-        {name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'},
-        {name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'},
-        {name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'},
-        {name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}
 
-        ]
+
 
     }
   },
@@ -370,7 +278,7 @@
     },
     handlePreview(file) {
       console.log(file);
-    }
+    },
 
   }
 }
@@ -419,13 +327,3 @@ new Ctor().$mount('#app')*/
 
 </style>
 
-<style scoped>
-  .block {
-    display: block;
-  }
-
-  .el-button+.el-button {
-    margin-left: 0px;
-  }
-
-</style>

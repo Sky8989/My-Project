@@ -9,12 +9,22 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import App from './App.vue';
 
+import ImageUpload from './components/Image'
+import Document from './components/Document'
+import Principal from './components/Principal'
+import Listting from './components/Listting'
+
 //解决跨域
 Vue.prototype.HOST = '/api'
 
 Vue.config.productionTip = false
 //vue 加入ElementUI
 Vue.use(ElementUI);
+//导入自定义组件
+Vue.use(ImageUpload);
+Vue.use(Document);
+Vue.use(Principal);
+Vue.use(Listting);
 
 
 
