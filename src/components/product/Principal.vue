@@ -2,59 +2,71 @@
     <div id="Principal">
       <el-button style="float: left" @click="addPrincipal = true">新增</el-button>
       <el-dialog title="新增记录/编辑"  :visible.sync="addPrincipal" style="width: auto; height: auto">
-        <el-form :model="form">
+        <el-form :model="form" label-width="100px" :label-position="labelPosition">
 
-          <el-row :gutter="10">
-            <el-col :span="5">
-              产品型号：<el-input style=" width: 90px" value="SW-01" v-model="form.modelNumber" ></el-input>
-
-            </el-col>
-            <el-col :span="5">
-              运营组别：<el-input style=" width: 90px" value="A" v-model="form.deptName"></el-input>
-            </el-col>
-          </el-row><br>
-
-          <el-row :gutter="10">
-            <el-col :span="5">
-              所属BU：<el-input style=" width: 90px" value="BU" v-model="form.BU"></el-input>
-            </el-col>
-            <el-col :span="5">
-              运营负责人：<el-input style=" width: 90px" value="XXX" v-model="form.deptUser"></el-input>
-            </el-col>
-          </el-row><br>
-
-
-          <el-row :gutter="10">
-            <el-col :span="5">
-              产品系列：<el-input style=" width: 90px" value="LC" v-model="form.productCategory"></el-input>
-
-            </el-col>
-            <el-col :span="8">
-              国家：
-              <el-select  placeholder="请选择国家" v-model="form.country">
-                <el-option label="UK" value="UK"></el-option>
-                <el-option label="USA" value="USA"></el-option>
-                <el-option label="JP" value="USA"></el-option>
-                <el-option label="CH" value="USA"></el-option>
-                <el-option label="DE" value="USA"></el-option>
-              </el-select>
+          <el-row >
+            <el-col :span="6">
+              <el-form-item label="产品型号:">
+                <el-input value="SW-01" v-model="form.modelNumber" ></el-input>
+              </el-form-item>
             </el-col>
 
-            <el-col :span="8">
-              ASIN：
-              <el-select  placeholder="请选择ASIN" v-model="form.asin">
-                <el-option label="1" value="UK"></el-option>
-                <el-option label="2" value="USA"></el-option>
-                <el-option label="3" value="USA"></el-option>
-                <el-option label="4" value="USA"></el-option>
-                <el-option label="5" value="USA"></el-option>
-              </el-select>
+            <el-col :span="6">
+              <el-form-item label="运营组别:">
+                <el-input  value="A" v-model="form.deptName"></el-input>
+              </el-form-item>
             </el-col>
-          </el-row><br>
+          </el-row>
+
+          <el-row >
+            <el-col :span="6">
+              <el-form-item label="所属BU:">
+                <el-input  value="BU" v-model="form.BU"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="6">
+              <el-form-item label="运营负责人:">
+                <el-input  value="XXX" v-model="form.deptUser"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
 
 
+          <el-row >
 
+            <el-col :span="6">
+              <el-form-item label="产品系列:">
+                <el-input  value="LC" v-model="form.productCategory"></el-input>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+              <el-form-item label="国家:">
+                <el-select  placeholder="请选择国家" v-model="form.country">
+                  <el-option label="UK" value="UK"></el-option>
+                  <el-option label="USA" value="USA"></el-option>
+                  <el-option label="JP" value="USA"></el-option>
+                  <el-option label="CH" value="USA"></el-option>
+                  <el-option label="DE" value="USA"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+
+            <el-col :span="6">
+              <el-form-item label="ASIN:">
+                <el-select  placeholder="请选择ASIN" v-model="form.asin">
+                  <el-option label="1" value="UK"></el-option>
+                  <el-option label="2" value="USA"></el-option>
+                  <el-option label="3" value="USA"></el-option>
+                  <el-option label="4" value="USA"></el-option>
+                  <el-option label="5" value="USA"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+
+          </el-row>
         </el-form>
+
         <div slot="footer" class="dialog-footer">
           <el-button @click="addPrincipal = false">取 消</el-button>
           <el-button type="primary" @click="submitPrincipal">确 定</el-button>
@@ -83,6 +95,7 @@
         name: "Principal",
       data(){
           return{
+            labelPosition:'right',
             addPrincipal:false,
             principalList:[
               {country:'US',modelNumber:'SW-01',asin:'xxxxxx',productCategory:'LC',BU:'SY',dept:'A',deptUser:'XXX',recordUser:"XXX",uTime:'2019-3-19',remark:"备注"},

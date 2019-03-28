@@ -1,4 +1,4 @@
-<template xmlns:el-col="http://www.w3.org/1999/html">
+<template>
 
   <div id="app">
 
@@ -6,184 +6,12 @@
       <el-col :span="5"> <el-input value="产品基础信息" style="width:150px; float: left;"/> </el-col>
     </el-row>
 
+    <SearchBar ref="searchBar"></SearchBar>
 
-    <el-row :gutter="10" id="search">
-      <el-col :span="3"><el-select v-model="form.select1"  placeholder="Model/ASIN/SKU"> </el-select></el-col>
-      &nbsp;&nbsp;
-      <el-col :span="2"> <el-input value="aaa"  style="display:inline-block; width: 150px"  /></el-col>
-      &nbsp;&nbsp;
-      <el-col :span="3"><el-select v-model="form.select1"  placeholder="BU" > </el-select></el-col>
-      &nbsp;
-      <el-col :span="3"><el-select v-model="form.select1"  placeholder="系列" > </el-select></el-col>
-      &nbsp;
-      <el-col :span="3"><el-select v-model="form.select1"  placeholder="Model" > </el-select></el-col>
-      &nbsp;
-      <el-col :span="1"><el-button>查找</el-button></el-col>
-    </el-row>
-
-
-
-    <el-form id="form" ref="form" :model="form"   style="border-radius: 4px;border: 2px solid #eee; padding: 1px 1px 1px 1px;">
-      <!--顶栏容器-->
-      <el-container >
-          <el-header style="height:3px;">
-           <!-- <hr/>-->
-          </el-header>
-
-          <el-main id = "main1" >
-
-            <el-row :gutter="10" id="context" justify="center">
-              <el-col :span="20" id="left">
-
-                <el-row :gutter="10" id = "1">
-                  <el-col :span="3" >型号: <el-input  value=""  style="width: 120px; "/></el-col>
-                  <el-col :span="5" :offset="1">BU: <el-select v-model="form.bu"  placeholder="BU" ></el-select></el-col>
-                  <el-col :span="5" >品牌: <el-select v-model="form.pp"  placeholder="品牌" > </el-select></el-col>
-                  <el-col :span="5" >系列: <el-select v-model="form.xl"  placeholder="系列"  size="medium" > </el-select></el-col>
-                </el-row>
-                <br/>
-
-                <el-row :gutter="10" id = "2">
-
-                  <el-col :span="4" >长：<el-input-number controls-position="right" v-model="form.c" > </el-input-number></el-col>
-                  <el-col :span="4" >体积：<el-input-number controls-position="right" v-model="form.select2"   > </el-input-number></el-col>
-                  <el-col :span="9" >材质：<el-input  style=" width: 420px"  value="材质"  /> </el-col>
-
-                </el-row>
-                <br/>
-
-                <el-row :gutter="10" id = "3">
-
-                  <el-col :span="4" >宽：<el-input-number controls-position="right" v-model="form.select4" > </el-input-number> </el-col>
-                  <el-col :span="4" >毛重：<el-input-number controls-position="right" v-model="form.select5" > </el-input-number></el-col>
-                  <el-col :span="9" >认证：<el-input  style="display:inline-block; width: 420px"  /></el-col>
-
-                </el-row>
-                <br/>
-
-                <el-row :gutter="10" id = "4">
-
-                  <el-col :span="4" >高：<el-input-number controls-position="right" v-model="form.select41" > </el-input-number></el-col>
-                  &nbsp;
-                  <el-col :span="4" >净重：<el-input-number controls-position="right" v-model="form.select15" > </el-input-number></el-col>
-                  &nbsp;
-                  <el-col :span="9" >包装内含物：<el-input  style="display:inline-block; width: 420px"  /></el-col>
-                </el-row>
-                <br/>
-
-                <el-row :gutter="10" id = "5">
-
-                  <el-col :span="4" >ODR：<el-input-number controls-position="right" v-model="form.select6"  :step="0.01" > </el-input-number></el-col>
-                  <el-col :span="4" >U8：<el-input-number controls-position="right" v-model="form.select7" > </el-input-number></el-col>
-
-                </el-row>
-
-                <br/>
-
-              </el-col>
-
-              <!--居中操作-->
-              <!--position:fixed;top:50%;left:80%;margin-left:-100px;margin-top:-150px;-->
-              <el-col :span="4" id="right" style=" padding: 100px 100px 0px 0px  ">
-
-
-                <el-upload
-                  class="avatar-uploader"
-                  action="https://jsonplaceholder.typicode.com/posts/"
-                  :show-file-list="false"
-                  :on-success="handleAvatarSuccess"
-                  :before-upload="beforeAvatarUpload">
-                  <img v-if="imageUrl" :src="imageUrl" class="avatar">
-                  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                </el-upload>
-
-              </el-col>
-          </el-row>
-
-        </el-main>
-
-
-          <el-footer id="footer" style="height: auto; padding: 0px 0px 5px 10px">
-
-            <el-row :gutter="10">
-              <el-col :span="18">
-                <el-input  style="display:inline-block; width: 150px; float: left"  value="产品描述" />
-                <br><br>
-                <el-input type="textarea" v-model="form.zh" placeholder="中文描述"></el-input>
-                <el-input type="textarea" v-model="form.us" placeholder="英文描述"></el-input>
-              </el-col>
-
-              <!--style="position:fixed;top:60%;left:70%;"-->
-              <el-col :span="4" style="padding: 50px 120px 0px 0px">
-                <el-button @submit="submit" >编辑/提交</el-button>
-              </el-col>
-
-            </el-row>
-
-         </el-footer>
-
-
-      </el-container>
-
-    </el-form>
-
-    <hr/>
+    <ProductForm ref="productForm"></ProductForm>
     <br>
-
     <!--产品相关联信息操作-->
-    <el-row :gutter="10"  name="productRel">
-
-      <el-col :span="24" >
-
-        <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick" style="height: auto;">
-          <el-tab-pane label="图片" name="first">
-           <!--引用 ImageUpload 组件 引用的名称小写多个字母用中划线分割(-)-->
-            <ImageUpload ref="image-upload"></ImageUpload>
-
-          </el-tab-pane>
-
-          <el-tab-pane label="文档" name="second">
-
-            <Document ref="document"></Document>
-
-          </el-tab-pane>
-
-          <el-tab-pane label="负责人列表" name="third">
-
-            <Principal ref="principal"></Principal>
-
-          </el-tab-pane>
-
-          <el-tab-pane label="listing事件记录" name="fourth">
-            <Listting ref="listting"></Listting>
-
-          </el-tab-pane>
-
-          <el-tab-pane label="供应商" name="5">
-
-
-
-
-          </el-tab-pane>
-
-          <el-tab-pane label="物流费用" name="6">
-
-          </el-tab-pane>
-
-          <el-tab-pane label="编码信息表" name="7">
-
-          </el-tab-pane>
-
-          <el-tab-pane label="其他" name="8">
-
-          </el-tab-pane>
-        </el-tabs>
-
-      </el-col>
-
-    </el-row>
-
-
+    <Tabs ref="tabs"></Tabs>
   </div>
 
 </template>
@@ -197,46 +25,24 @@
 
 
 <script>
-  //导入组件
-  import ImageUpload from './Image'
-  import Document from "./Document";
-  import Principal from "./Principal";
-  import Listting from "./Listting";
+
+  import SearchBar from "./product/SearchBar";
+  import ProductForm from "./product/ProductForm";
+  import Tabs from "./product/Tabs";
 
   export default {
   name: 'HelloWorld',
-    //注册组件
-    components: {Listting, Document, ImageUpload,Principal},
+    components:{SearchBar,ProductForm,Tabs},
+
   data () {
     return {
-
-      formLabelWidth:'100px',
-      activeName: 'first',
       border:true,
       dialogImageUrl: '',
       dialogVisible: false,
       imageUrl:"",
-      form: {
-        select1: '',
-        name: '名称',
-        region: 'shanghai',
-        date1: '',
-        date2: '',
-        delivery: true,
-        type: [],
-        resource: '',
-        desc: '',
-        bu:"",
-      },
-
-
-
     }
   },
-
-
-  methods: {
-
+    methods: {
     formatter(row, column) {
       return row.date;
     },
@@ -244,14 +50,9 @@
       /* 过滤年龄这列 值相等 过滤*/
       return row.age === value;
       // return row.age;
-    },
-    submit(){
-
-    },
+    }
+    ,
     beforeAvatarUpload(){
-
-    },
-    handleAvatarSuccess(){
 
     },
     handleAvatarSuccess(res, file) {
@@ -282,20 +83,11 @@
 
   }
 }
-
-/*var Ctor = Vue.extend(Main)
-new Ctor().$mount('#app')*/
-
-
-
 </script>
-
 
 <!-- 引入 element-ui 样式 -->
 <link rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css">
 <style >
-
-
   .avatar-uploader .el-upload {
     border: 1px dashed #d9d9d9;
     border-radius: 6px;
@@ -319,11 +111,5 @@ new Ctor().$mount('#app')*/
     height: 178px;
     display: block;
   }
-
-
-
-
-
-
 </style>
 

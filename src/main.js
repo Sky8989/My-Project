@@ -9,10 +9,15 @@ import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import App from './App.vue';
 
-import ImageUpload from './components/Image'
-import Document from './components/Document'
-import Principal from './components/Principal'
-import Listting from './components/Listting'
+import ImageUpload from './components/product/Image'
+import Document from './components/product/Document'
+import Principal from './components/product/Principal'
+import Listting from './components/product/Listting'
+import Supplier from './components/product/Supplier'
+import CodedInfo from './components/product/CodedInfo'
+import SearchBar from './components/product/SearchBar'
+import ProductForm from './components/product/ProductForm'
+import Tabs from './components/product/Tabs'
 
 //解决跨域
 Vue.prototype.HOST = '/api'
@@ -25,6 +30,11 @@ Vue.use(ImageUpload);
 Vue.use(Document);
 Vue.use(Principal);
 Vue.use(Listting);
+Vue.use(Supplier);
+Vue.use(CodedInfo);
+Vue.use(SearchBar);
+Vue.use(ProductForm);
+Vue.use(Tabs);
 
 
 
