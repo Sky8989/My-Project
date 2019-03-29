@@ -12,7 +12,8 @@ module.exports = {
     assetsPublicPath: '/',
     proxyTable: {
       "/api": {
-        target: "http://localhost:3000",
+        //注意：代理端口如果和后端端口 不用会出现 504 (Gateway Timeout)
+        target: "http://127.0.0.1:10021",
         changeOrigin: true,
         pathRewrite: {
           '^/api': ''

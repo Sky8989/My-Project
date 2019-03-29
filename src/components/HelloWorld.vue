@@ -6,7 +6,7 @@
       <el-col :span="5"> <el-input value="产品基础信息" style="width:150px; float: left;"/> </el-col>
     </el-row>
 
-    <SearchBar ref="searchBar"></SearchBar>
+   <!-- <SearchBar ref="searchBar" @sendSearchResult="receiveSearchResult"></SearchBar>-->
 
     <ProductForm ref="productForm"></ProductForm>
     <br>
@@ -80,6 +80,9 @@
     handlePreview(file) {
       console.log(file);
     },
+      receiveSearchResult(data){
+
+      }
 
   }
 }

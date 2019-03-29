@@ -8,6 +8,7 @@ import Vue from 'vue';
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import App from './App.vue';
+import axios from 'axios';
 
 import ImageUpload from './components/product/Image'
 import Document from './components/product/Document'
@@ -21,6 +22,7 @@ import Tabs from './components/product/Tabs'
 
 //解决跨域
 Vue.prototype.HOST = '/api'
+Vue.prototype.axios = axios;
 
 Vue.config.productionTip = false
 //vue 加入ElementUI
@@ -36,7 +38,7 @@ Vue.use(SearchBar);
 Vue.use(ProductForm);
 Vue.use(Tabs);
 
-
+axios.defaults.timeout =  6000;
 
 /* eslint-disable no-new */
 new Vue({

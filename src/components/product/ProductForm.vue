@@ -1,5 +1,10 @@
 <template>
+
+
     <div id="ProductForm">
+      <SearchBar ref="searchBar" @sendSearchResult="receiveProductInfo" ></SearchBar>
+
+
       <el-form  :model="product" label-width="90px" :label-position="labelPosition"   style="border-radius: 4px;border: 2px solid #eee; padding: 1px 1px 1px 1px;">
         <!--顶栏容器-->
         <el-container >
@@ -10,7 +15,7 @@
                 <el-row>
                   <el-col :span="5" >
                     <el-form-item label="型号:">
-                      <el-input  v-model="product.modelNumber" style="width: 180px"/>
+                      <el-input  v-model="product.productModelNumber" style="width: 180px"/>
                     </el-form-item>
                   </el-col>
 
@@ -22,13 +27,13 @@
 
                   <el-col :span="5" >
                     <el-form-item label="品牌:">
-                      <el-select v-model="product.brand"  placeholder="品牌"  > </el-select>
+                      <el-select v-model="product.brandId"  placeholder="品牌"  > </el-select>
                     </el-form-item>
                   </el-col>
 
                   <el-col :span="5" >
                     <el-form-item label="系列:">
-                      <el-select v-model="product.category"  placeholder="系列"   ></el-select>
+                      <el-select v-model="product.productCategoryId"  placeholder="系列"   ></el-select>
                     </el-form-item>
                     </el-col>
                 </el-row>
@@ -37,7 +42,7 @@
                 <el-row>
                   <el-col :span="5" >
                     <el-form-item label="长:">
-                      <el-input-number controls-position="right" v-model="product.long" > </el-input-number>
+                      <el-input-number controls-position="right" v-model="product.productLong" > </el-input-number>
                     </el-form-item>
                   </el-col>
 
@@ -49,7 +54,7 @@
 
                   <el-col :span="10" >
                     <el-form-item label="材质:">
-                      <el-input  v-model="product.material" value="材质"  />
+                      <el-input  v-model="product.productMaterial" value="材质"  />
                     </el-form-item>
                   </el-col>
                 </el-row>
@@ -59,19 +64,19 @@
 
                   <el-col :span="5" >
                     <el-form-item label="宽:">
-                      <el-input-number controls-position="right" v-model="product.width" > </el-input-number>
+                      <el-input-number controls-position="right" v-model="product.productCategoryId" > </el-input-number>
                     </el-form-item>
                   </el-col>
 
                   <el-col :span="5" >
                     <el-form-item label="毛重:">
-                      <el-input-number controls-position="right" v-model="product.grossweight" > </el-input-number>
+                      <el-input-number controls-position="right" v-model="product.productGrossweight" > </el-input-number>
                     </el-form-item>
                   </el-col>
 
                   <el-col :span="10" >
                     <el-form-item label="认证:">
-                      <el-input  style="display:inline-block;" v-model="product.certification" />
+                      <el-input  style="display:inline-block;" v-model="product.productCertification" />
                     </el-form-item>
                   </el-col>
                 </el-row>
@@ -80,19 +85,19 @@
                 <el-row >
                   <el-col :span="5" >
                     <el-form-item label="高:">
-                      <el-input-number controls-position="right" v-model="product.height" > </el-input-number>
+                      <el-input-number controls-position="right" v-model="product.productHeight" > </el-input-number>
                     </el-form-item>
                   </el-col>
 
                   <el-col :span="5" >
                     <el-form-item label="净重:">
-                      <el-input-number controls-position="right" v-model="product.netweight" > </el-input-number>
+                      <el-input-number controls-position="right" v-model="product.productNetweight" > </el-input-number>
                     </el-form-item>
                   </el-col>
 
                   <el-col :span="10" >
                     <el-form-item label="包装内含物">
-                      <el-input  style="display:inline-block;"  v-model="product.packageContains" />
+                      <el-input  style="display:inline-block;"  v-model="product.productPackageContains" />
                     </el-form-item>
                   </el-col>
                 </el-row>
@@ -138,8 +143,8 @@
             <el-row>
               <el-col :span="20">
                 <el-input  style="display:inline-block; width: 90px; float: left"  value="产品描述" />
-                <el-input type="textarea" v-model="product.descriptionChs" :autosize="{minRows:4,maxRows:6}" placeholder="中文描述"></el-input>
-                <el-input type="textarea" v-model="product.descriptionEn" :autosize="{minRows:4,maxRows:6}" placeholder="英文描述"></el-input>
+                <el-input type="textarea" v-model="product.productDescriptionChs" :autosize="{minRows:4,maxRows:6}" placeholder="中文描述"></el-input>
+                <el-input type="textarea" v-model="product.productDescriptionEn" :autosize="{minRows:4,maxRows:6}" placeholder="英文描述"></el-input>
               </el-col>
 
               <el-col :span="4" style="padding: 50px 120px 0px 0px">
@@ -156,31 +161,36 @@
 </template>
 
 <script>
+  import SearchBar from "./SearchBar";
+
     export default {
         name: "ProductForm",
+      components:{SearchBar},
       data(){
           return{
             labelPosition:'right',
             imageUrl:"",
             product:{
-              modelNumber:'',
-              BU:'',
-              brand:'',
-              category:'',
-              long:'',
-              volume:'',
-              material:'',
-              width:'',
-              grossweight:'',
-              certification:'',
-              height:'',
-              netweight:'',
-              packageContains:'',
-              ODR:'',
-              U8Code:'',
-              descriptionChs:'',
-              descriptionEn:'',
-
+              brandId: 0,
+              businessUnitId: 0,
+              cTime: null,
+              productCategoryId: 0,
+              productCertification: "",
+              productDescriptionChs: "",
+              productDescriptionEn: "",
+              productGrossweight: 0.0,
+              productHeight: 0.0,
+              productId: 0,
+              productLong: 0.0,
+              productMaterial: "",
+              productModelNumber: "",
+              productNetweight: 0.0,
+              productPackageContains: "",
+              productWidth: 0.0,
+              status: 0,
+              userId: 0,
+              U8Code: 0,
+              ODR: 0.0,
             }
           }
       },
@@ -203,6 +213,20 @@
         },
         submit(){
           console.log("保存产品")
+        },
+        receiveProductInfo(data){
+
+          //先清除数据
+          this.product = null
+
+          this.product = data
+          console.log("productForm")
+          console.log(data)
+
+          if(this.product == null){
+            //查询不到数据 给提示
+
+          }
         }
 
       }

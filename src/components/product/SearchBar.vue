@@ -17,12 +17,13 @@
         &nbsp;
         <el-col :span="3"><el-select v-model="model"  placeholder="Model" > </el-select></el-col>
         &nbsp;
-        <el-col :span="1"><el-button>查找</el-button></el-col>
+        <el-col :span="1"><el-button @click="searchProduct" >查找</el-button></el-col>
       </el-row>
     </div>
 </template>
 
 <script>
+  import axios from 'axios'
     export default {
         name: "SearchBar",
       data(){
@@ -32,12 +33,64 @@
             BU:'',
             model:'',
             productCategory:"",
+            product:{
+              brandId: 0,
+              businessUnitId: 0,
+              cTime: null,
+              productCategoryId: 0,
+              productCertification: "",
+              productDescriptionChs: "",
+              productDescriptionEn: "",
+              productGrossweight: 0.0,
+              productHeight: 0.0,
+              productId: 0,
+              productLong: 0.0,
+              productMaterial: "",
+              productModelNumber: "",
+              productNetweight: 0.0,
+              productPackageContains: "",
+              productWidth: 0.0,
+              status: 0,
+              userId: 0,
+            }
 
 
 
           }
       },methods:{
+        searchProduct(){
 
+
+
+          var searchfield = this.searchfield;
+          var fieldValue = this.fieldValue;
+          var url = ""
+
+          if(searchfield === "model"){
+            console.log(searchfield)
+            url = "/findProduct/findProductByModelNumber/";
+          }else if(searchfield === 'sku'){
+            url = "/findProduct/findProductBySku/";
+            console.log(searchfield)
+          }else if(searchfield == 'asin'){
+            url = "/findProduct/findProductByAsin/";
+            console.log(searchfield)
+          }
+
+          url += fieldValue
+          axios.get(this.HOST+url,{
+
+          })
+            .then(result => {
+            console.log(result.data)
+            console.log(result.data.data)
+              this.product = result.data.data
+              this.$emit("sendSearchResult", this.product)
+          })
+            .catch(error =>{
+              console.log(error)
+            })
+        }
       }
     }
 </script>
