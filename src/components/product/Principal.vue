@@ -1,19 +1,19 @@
 <template>
     <div id="Principal">
-      <el-button style="float: left" @click="addPrincipal = true">新增</el-button>
+      <el-button style="float: left" @click="addPrincipalMethod">新增</el-button>
       <el-dialog title="新增记录/编辑"  :visible.sync="addPrincipal" style="width: auto; height: auto">
-        <el-form :model="form" label-width="100px" :label-position="labelPosition">
+        <el-form :model="form" label-width="90px" :label-position="labelPosition">
 
           <el-row >
             <el-col :span="6">
               <el-form-item label="产品型号:">
-                <el-input value="SW-01" v-model="form.modelNumber" ></el-input>
+                <span>{{form.modelNumber}}</span>
               </el-form-item>
             </el-col>
 
             <el-col :span="6">
               <el-form-item label="运营组别:">
-                <el-input  value="A" v-model="form.deptName"></el-input>
+                <span>{{form.deptName}}</span>
               </el-form-item>
             </el-col>
           </el-row>
@@ -21,33 +21,30 @@
           <el-row >
             <el-col :span="6">
               <el-form-item label="所属BU:">
-                <el-input  value="BU" v-model="form.BU"></el-input>
+                <span>{{form.BU}}</span>
+                <input hidden type="number" v-model="form.BuId"></input>
               </el-form-item>
             </el-col>
             <el-col :span="6">
               <el-form-item label="运营负责人:">
-                <el-input  value="XXX" v-model="form.deptUser"></el-input>
+                <span>{{form.deptUser}}</span>
               </el-form-item>
+              <input hidden type="number" v-model="form.deptUserId"></input>
             </el-col>
           </el-row>
 
 
           <el-row >
-
             <el-col :span="6">
               <el-form-item label="产品系列:">
-                <el-input  value="LC" v-model="form.productCategory"></el-input>
+                <span>{{form.productCategory}}</span>
               </el-form-item>
             </el-col>
 
             <el-col :span="6">
               <el-form-item label="国家:">
-                <el-select  placeholder="请选择国家" v-model="form.country">
-                  <el-option label="UK" value="UK"></el-option>
-                  <el-option label="USA" value="USA"></el-option>
-                  <el-option label="JP" value="USA"></el-option>
-                  <el-option label="CH" value="USA"></el-option>
-                  <el-option label="DE" value="USA"></el-option>
+                <el-select  placeholder="请选择国家" v-model="form.country" @change="chooseCountry">
+                  <el-option v-for="country in countryList" :label="country.countryName" :key="country.countryId" :value="country.countryId"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -55,16 +52,22 @@
             <el-col :span="6">
               <el-form-item label="ASIN:">
                 <el-select  placeholder="请选择ASIN" v-model="form.asin">
-                  <el-option label="1" value="UK"></el-option>
-                  <el-option label="2" value="USA"></el-option>
-                  <el-option label="3" value="USA"></el-option>
-                  <el-option label="4" value="USA"></el-option>
-                  <el-option label="5" value="USA"></el-option>
+                  <el-option v-for="asin in asinList" :key="asin" :value="asin" :label="asin"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
 
           </el-row>
+
+
+          <el-row>
+            <el-col :span="18">
+              <el-form-item label="备注:">
+                <el-input type="textarea" v-model="form.remark" :autosize="{minRows:3,maxRows:6}"></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+
         </el-form>
 
         <div slot="footer" class="dialog-footer">
@@ -74,15 +77,18 @@
 
       </el-dialog>
 
-      <el-table name="showTable" border="border" height="250px" style="width: 100%" :data="principalList">
-        <el-table-column prop="country" label="国家" ></el-table-column>
-        <el-table-column prop="modelNumber" label="产品型号" ></el-table-column>
+
+
+
+      <el-table name="showTable" border="border" height="250px" style="width: 100%" :data="principalList" @cell-click="editPrincipal">
+        <el-table-column prop="countryName" label="国家" ></el-table-column>
+        <el-table-column prop="productModelNumber" label="产品型号" ></el-table-column>
         <el-table-column prop="asin" label="ASIN" ></el-table-column>
         <el-table-column prop="productCategory" label="产品系列" ></el-table-column>
-        <el-table-column prop="BU" label="所属BU" ></el-table-column>
-        <el-table-column prop="dept" label="运营组别" ></el-table-column>
-        <el-table-column prop="deptUser" label="运营负责人" ></el-table-column>
-        <el-table-column prop="recordUser" label="记录人" ></el-table-column>
+        <el-table-column prop="businessUnit" label="所属BU" ></el-table-column>
+        <el-table-column prop="departmentName" label="运营组别" ></el-table-column>
+        <el-table-column prop="userName" label="运营负责人" ></el-table-column>
+        <el-table-column prop="record" label="记录人" ></el-table-column>
         <el-table-column prop="uTime" label="更新时间" ></el-table-column>
         <el-table-column prop="remark" label="备注" ></el-table-column>
         <el-table-column  label="编辑" ><el-button @click="addPrincipal = true">编辑</el-button></el-table-column>
@@ -97,36 +103,199 @@
           return{
             labelPosition:'right',
             addPrincipal:false,
-            principalList:[
-              {country:'US',modelNumber:'SW-01',asin:'xxxxxx',productCategory:'LC',BU:'SY',dept:'A',deptUser:'XXX',recordUser:"XXX",uTime:'2019-3-19',remark:"备注"},
-              {country:'US',modelNumber:'SW-01',asin:'xxxxxx',productCategory:'LC',BU:'SY',dept:'A',deptUser:'XXX',recordUser:"XXX",uTime:'2019-3-19',remark:"备注"},
-              {country:'US',modelNumber:'SW-01',asin:'xxxxxx',productCategory:'LC',BU:'SY',dept:'A',deptUser:'XXX',recordUser:"XXX",uTime:'2019-3-19',remark:"备注"},
-              {country:'US',modelNumber:'SW-01',asin:'xxxxxx',productCategory:'LC',BU:'SY',dept:'A',deptUser:'XXX',recordUser:"XXX",uTime:'2019-3-19',remark:"备注"},
-              {country:'US',modelNumber:'SW-01',asin:'xxxxxx',productCategory:'LC',BU:'SY',dept:'A',deptUser:'XXX',recordUser:"XXX",uTime:'2019-3-19',remark:"备注"},
-              {country:'US',modelNumber:'SW-01',asin:'xxxxxx',productCategory:'LC',BU:'SY',dept:'A',deptUser:'XXX',recordUser:"XXX",uTime:'2019-3-19',remark:"备注"},
-              {country:'US',modelNumber:'SW-01',asin:'xxxxxx',productCategory:'LC',BU:'SY',dept:'A',deptUser:'XXX',recordUser:"XXX",uTime:'2019-3-19',remark:"备注"},
-              {country:'US',modelNumber:'SW-01',asin:'xxxxxx',productCategory:'LC',BU:'SY',dept:'A',deptUser:'XXX',recordUser:"XXX",uTime:'2019-3-19',remark:"备注"},
-              {country:'US',modelNumber:'SW-01',asin:'xxxxxx',productCategory:'LC',BU:'SY',dept:'A',deptUser:'XXX',recordUser:"XXX",uTime:'2019-3-19',remark:"备注"},
-              {country:'US',modelNumber:'SW-01',asin:'xxxxxx',productCategory:'LC',BU:'SY',dept:'A',deptUser:'XXX',recordUser:"XXX",uTime:'2019-3-19',remark:"备注"},
-              {country:'US',modelNumber:'SW-01',asin:'xxxxxx',productCategory:'LC',BU:'SY',dept:'A',deptUser:'XXX',recordUser:"XXX",uTime:'2019-3-19',remark:"备注"}],
+            principalList:[],
               form:{
                 modelNumber:'',
                 deptName:'',
                 BU:'',
+                BuId:0,
                 deptUser:'',
                 productCategory:'',
                 country:'',
+                oldCountryId:0,
                 asin:'',
-
-
-              }
+                deptUserId:0,
+                remark:'',
+              },
+            countryList:[],
+            asinList:[],
           }
       },
+
       methods:{
+          init(){
+            this.searchPrincipal(this.$store.state.product.productId)
+          },
+        searchPrincipal(productId){
+
+            var url = this.HOST + "/findProductCharge/findProductUserChargeByProductId/" + productId
+            this.axios.get(url,{
+
+            }).then( res => {
+              if(res.data.code == "200"){
+                console.log(res.data.data)
+                this.principalList = res.data.data
+                return res.data.data
+              }
+            }).catch(error => {
+              console.log(error)
+            })
+
+        },
         submitPrincipal(){
           this.addPrincipal = false
           console.log("增加产品负责人")
+          var url = this.HOST
+          if(this.form.oldCountryId == 0){  //新增
+            url += "/findProductCharge/addProductUserCharger"
+          }else{//修改
+            url += "/findProductCharge/updateProductUserCharger"
+          }
+
+          var product = this.$store.state.product
+          var data = {
+            "asin": this.form.asin,
+            "countryId": this.form.country,
+            "oldCountryId": this.form.oldCountryId,
+            "productId": product.productId,
+            "record": "当前用户",
+            "remark": this.form.remark,
+            "userId": 1,
+          }
+
+          console.log(data)
+
+          this.axios({
+            method:'post',
+            url:url,
+            data:data,
+            /*headers: {
+              'Content-Type': 'application/json;charset=UTF-8'
+            }*/
+
+          }).then(res => {
+            if(res.data.code == '200'){
+
+              console.log("新增或修改负责人返回的结果------")
+              console.log(res.data.data)
+              var msg = res.data.data
+              if(this.form.oldCountryId == 0){
+                this.$message("新增负责人" + msg)
+              }else{
+                this.$message("修改负责人" + msg)
+              }
+
+
+            }
+          }).catch(error => {
+            console.log(error)
+          })
+
+
+
+
+        },
+        chooseCountry(){
+
+            this.asinList = []
+            this.form.asin = ""
+            this.form.remark = ""
+
+          console.log("chooseCountry")
+          // console.log(this.form.oldCountryId)
+
+          if(this.form.oldCountryId != 0){  //判断是新增 还是修改
+            this.form.oldCountryId = this.form.country
+          }
+          // console.log(this.form.oldCountryId)
+
+          this.findProductAsinByProductIdAndCountryId(this.$store.state.product.productId,this.form.country);
+        },
+        findCountryByProductId(productId){
+          var url = this.HOST + "/findProductCharge/findProductUserCountryByProductId/" + productId
+
+          this.axios.get(url,{
+
+          }).then(res => {
+            if(res.data.code == '200'){
+              console.log(res.data.data)
+              this.countryList = res.data.data
+            }
+          }).catch(error => {
+            console.log(error)
+          })
+
+        },
+        findProductAsinByProductIdAndCountryId(productId,countryId){
+
+            var url = this.HOST + "/findProductCharge/findProductAsinByProductIdAndCountryId"
+            var data ={
+              countryId:countryId,
+              productId:productId,}
+            this.axios({
+              method: 'post',
+              url:  url,
+              data:  this.qs.stringify(data), //处理数据
+
+              }).then(res => {
+              if(res.data.code == "200"){
+                console.log("==findProductAsinByProductIdAndCountryId==")
+                console.log(res.data)
+                this.asinList = res.data.data
+              }
+            }).catch(error => {
+              console.log(error)
+            })
+          },addPrincipalMethod(){
+            this.form.country = ""
+            this.form.asin = ""
+            this.addOredit("add",null)
+
+        },
+        editPrincipal(row,cell){    //注意 参数存在的的前提是有row参数 否则cell为null
+            console.log("editPrincipal  ====" )
+            console.log(cell)
+            if(cell.label != "编辑"){
+              return false
+            }
+          this.addOredit('edit',row)
+
+        },addOredit(type,row){
+          console.log(type)
+          var principalList =  this.principalList[0]
+          console.log("---principalList--")
+          console.log(principalList)
+
+          if(principalList == null){
+            this.$message("负责人列表为空")
+            return false
+          }
+
+          //给表单赋值
+
+          this.addPrincipal = true
+          var product = this.$store.state.product;
+          this.form.modelNumber = product.productModelNumber
+          this.form.productCategory = product.productCategory
+          this.form.BU = principalList.businessUnit
+          this.form.BuId = principalList.businessUnitId
+          this.form.deptName = principalList.departmentName
+          this.form.deptUser = principalList.userName
+          this.form.deptUserId = principalList.userId
+          //新增编辑 默认加载国家
+          this.findCountryByProductId(product.productId)
+            if(type == 'edit'){
+              this.form.country = row.countryId
+              this.form.oldCountryId = row.countryId
+              this.form.asin = row.asin
+              //编辑时需要加载asin
+              //  this.findProductAsinByProductIdAndCountryId(this.$store.state.product.productId,this.form.country);
+            }
+
         }
+
+
+
       }
     }
 </script>

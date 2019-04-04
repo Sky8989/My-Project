@@ -5,36 +5,36 @@
         <el-col :span="24" >
 
           <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick" style="height: auto;">
-            <el-tab-pane label="图片" name="first">
+            <el-tab-pane label="图片" name="图片">
               <!--引用 ImageUpload 组件 引用的名称小写多个字母用中划线分割(-)-->
-              <ImageUpload ref="image-upload"></ImageUpload>
+              <ImageUpload ref="imageUpload"></ImageUpload>
             </el-tab-pane>
 
-            <el-tab-pane label="文档" name="second">
+            <el-tab-pane label="文档" name="文档">
               <Document ref="document"></Document>
             </el-tab-pane>
 
-            <el-tab-pane label="负责人列表" name="third">
+            <el-tab-pane label="负责人列表" name="负责人列表">
               <Principal ref="principal"></Principal>
             </el-tab-pane>
 
-            <el-tab-pane label="listing事件记录" name="fourth">
+            <el-tab-pane label="listing事件记录" name="listing事件记录">
               <Listting ref="listting"></Listting>
             </el-tab-pane>
 
-            <el-tab-pane label="供应商" name="5">
+            <el-tab-pane label="供应商" name="供应商">
               <Supplier ref="supplier"></Supplier>
             </el-tab-pane>
 
-            <el-tab-pane label="物流费用" name="6">
+            <el-tab-pane label="物流费用" name="物流费用">
 
             </el-tab-pane>
 
-            <el-tab-pane label="编码信息表" name="7">
+            <el-tab-pane label="编码信息表" name="编码信息表">
               <CodedInfo ref="codedInfo"></CodedInfo>
             </el-tab-pane>
 
-            <el-tab-pane label="其他" name="8">
+            <el-tab-pane label="其他" name="其他">
 
             </el-tab-pane>
           </el-tabs>
@@ -67,8 +67,39 @@
       },
       methods:{
         handleClick(tab, event) {
-          console.log(tab, event);
+          var tabName  = tab.name;
+          if(tabName == '图片'){
+            this.$refs.imageUpload.init()
+          }
+          else if(tabName == "文档"){
+            this.$refs.document.init()
+          }
+          else if(tabName == "负责人列表"){
+            this.$refs.principal.init()
+          }
+          else if(tabName == "listing事件记录"){
+            this.$refs.listting.init()
+          }
+          else if(tabName == "供应商"){
+            this.$refs.supplier.init()
+          }
+          else if(tabName == "物流费用"){
+            // this.$refs.listting.init()
+          }
+          else if(tabName == "编码信息表"){
+            // this.$refs.listting.init()
+          }
+          else if(tabName == "其他"){
+            // this.$refs.listting.init()
+          }
+
+
+
+
         },
+        clickListting(){
+
+        }
       }
     }
 </script>

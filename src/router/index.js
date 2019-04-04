@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import HelloWorld from '@/components/HelloWorld'
+import uploadFile from '@/components/uploadFile'
 import ImageUpload from '@/components/product/Image'
 import Document from '@/components/product/Document'
 import Principal from '@/components/product/Principal'
@@ -65,6 +66,10 @@ export default new Router({
       path:'/tabs',
       name:'Tabs',
       component:Tabs
+    }, {
+      path:'/uploadFile',
+      name:'uploadFile',
+      component:uploadFile
     }
 
   ]

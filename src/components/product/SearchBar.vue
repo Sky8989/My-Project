@@ -1,25 +1,48 @@
 <template>
     <div id="SearchBar">
-      <el-row :gutter="10" id="search">
-        <el-col :span="3">
-          <el-select  placeholder="Model/ASIN/SKU" v-model="searchfield">
-            <el-option label="Model" value="model"></el-option>
-            <el-option label="ASIN" value="asin"></el-option>
-            <el-option label="SKU" value="sku"></el-option>
-          </el-select>
-        </el-col>
-        &nbsp;&nbsp;
-        <el-col :span="2"> <el-input value="aaa" v-model="fieldValue"  style="display:inline-block; width: 150px"  /></el-col>
-        &nbsp;&nbsp;
-        <el-col :span="3"><el-select v-model="BU"  placeholder="BU" > </el-select></el-col>
-        &nbsp;
-        <el-col :span="3"><el-select v-model="productCategory"  placeholder="系列" > </el-select></el-col>
-        &nbsp;
-        <el-col :span="3"><el-select v-model="model"  placeholder="Model" > </el-select></el-col>
-        &nbsp;
-        <el-col :span="1"><el-button @click="searchProduct" >查找</el-button></el-col>
-      </el-row>
+      <el-form id="searchForm">
+        <el-row :gutter="10" >
+          <el-col :span="3">
+            <el-select  placeholder="Model/ASIN/SKU" v-model="searchfield">
+              <el-option label="Model" value="model"></el-option>
+              <el-option label="ASIN" value="asin"></el-option>
+              <el-option label="SKU" value="sku"></el-option>
+            </el-select>
+          </el-col>
+          &nbsp;&nbsp;
+          <el-col :span="2"> <el-input value="aaa" v-model="fieldValue"  style="display:inline-block; width: 150px"  /></el-col>
+          &nbsp;&nbsp;
+        </el-row>
+
+        <el-row :gutter="10">
+          <el-col :span="3">
+            <el-select v-model="BU"  placeholder="BU" @change="chooseBU">
+              <el-option  v-for="bu in BUList" :key="bu.businessUnitId" :value="bu.businessUnitId" :label="bu.businessUnit"></el-option>
+
+            </el-select>
+          </el-col>
+          &nbsp;
+          <el-col :span="3">
+            <el-select v-model="productCategoryId"  placeholder="系列" @change="chooseProductCategory">
+              <el-option v-for="category in productCategoryList"  :key="category.productCategoryId" :value="category.productCategoryId" :label="category.productCategory" ></el-option>
+
+            </el-select>
+          </el-col>
+          &nbsp;
+          <el-col :span="3">
+            <el-select v-model="model"  placeholder="Model" >
+              <el-option v-for="product in productDetailList" :key="product.productModelNumber" :value="product.productModelNumber" :label="product.productModelNumber"></el-option>
+            </el-select>
+          </el-col>
+          &nbsp;
+          <el-col :span="1"><el-button @click="searchProduct" >查找</el-button></el-col>
+        </el-row>
+      </el-form>
     </div>
+
+
+
+
 </template>
 
 <script>
@@ -32,7 +55,7 @@
             fieldValue:'',
             BU:'',
             model:'',
-            productCategory:"",
+            productCategoryId:'',
             product:{
               brandId: 0,
               businessUnitId: 0,
@@ -50,46 +73,124 @@
               productNetweight: 0.0,
               productPackageContains: "",
               productWidth: 0.0,
-              status: 0,
               userId: 0,
-            }
+            },
+            productCategoryList:[],
+            productDetailList: [],
+            BUList: [],
+
 
 
 
           }
-      },methods:{
+      },
+      mounted() {
+          this.init()
+      }
+      ,methods:{
+          init(){
+            this.initBU()
+          },
+        initBU(){
+          this.axios.get("http://192.168.1.224:10022/businessUnit/findAllBU",{
+          }).then(res => {
+            if(res.data.code == "200"){
+              var data = res.data.data
+              this.BUList = data
+              this.$emit("sendBUList", this.BUList)
+            }
+          })
+        },
         searchProduct(){
-
-
+          this.productCategoryList =[]
 
           var searchfield = this.searchfield;
           var fieldValue = this.fieldValue;
           var url = ""
 
-          if(searchfield === "model"){
+
+          if(fieldValue == null || fieldValue === ''){
+            url = "/findProduct/findProductByModelNumber/" +this.model
+          } else if(searchfield === "model"){
             console.log(searchfield)
-            url = "/findProduct/findProductByModelNumber/";
+            url = "/findProduct/findProductByModelNumber/" + fieldValue;
           }else if(searchfield === 'sku'){
-            url = "/findProduct/findProductBySku/";
+            url = "/findProduct/findProductBySku/" + fieldValue;
             console.log(searchfield)
           }else if(searchfield == 'asin'){
-            url = "/findProduct/findProductByAsin/";
+            url = "/findProduct/findProductByAsin/" + fieldValue;
             console.log(searchfield)
           }
 
-          url += fieldValue
           axios.get(this.HOST+url,{
 
           })
             .then(result => {
-            console.log(result.data)
-            console.log(result.data.data)
-              this.product = result.data.data
-              this.$emit("sendSearchResult", this.product)
-          })
-            .catch(error =>{
+              if(result.data.code == "200"){
+
+                this.$emit("sendSearchResult", result.data.data)
+              }
+          }).catch(error =>{
               console.log(error)
             })
+        },
+        open(mgs) {
+          this.$message(mgs);
+        },
+        chooseBU(){
+
+          var url = this.HOST + "/product/findByBusiness/" + this.BU
+          this.axios.get(url,{
+
+          }).then(res =>  {
+            if(res.data.code == "200"){
+              var data = res.data.data
+              console.log(res.data.data.productCategoryList)
+             this.productCategoryList = data.productCategoryList
+
+
+            }
+          }).catch(error => {
+            console.log(error)
+          })
+        },
+        chooseProduct(){
+          //先清空
+          this.productDetails =[]
+
+          var url = this.HOST + "/product/findByBusiness/" + this.BU
+          this.axios.get(url,{
+
+          }).then(res =>  {
+            if(res.data.code == "200"){
+              var data = res.data.data
+              console.log(res.data.data.productCategoryList)
+              this.productCategoryList = data.productCategoryList
+              console.log(this.productCategoryList[0].productCategoryId)
+              console.log(this.productCategoryList[0].productCategory)
+
+            }
+          }).catch(error => {
+            console.log(error)
+          })
+        },
+        chooseProductCategory(){
+
+          var url = this.HOST + "/product/findByCategory/" + this.productCategoryId
+          this.axios.get(url,{
+
+          }).then(res =>  {
+            if(res.data.code == "200"){
+              var data = res.data.data
+              console.log(res.data.data.productDetails)
+              this.productDetailList = data.productDetails
+              // console.log(this.productDetails[0].productModelNumber)
+              // console.log(this.productDetailList[0].productId)
+
+            }
+          }).catch(error => {
+            console.log(error)
+          })
         }
       }
     }

@@ -2,12 +2,14 @@
 
 
     <div id="ProductForm">
-      <SearchBar ref="searchBar" @sendSearchResult="receiveProductInfo" ></SearchBar>
+      <SearchBar ref="searchBar" @sendSearchResult="receiveProductInfo" @sendBUList="receiveBUList"></SearchBar>
 
 
       <el-form  :model="product" label-width="90px" :label-position="labelPosition"   style="border-radius: 4px;border: 2px solid #eee; padding: 1px 1px 1px 1px;">
         <!--顶栏容器-->
         <el-container >
+
+          <input v-model="product.productId" hidden ></input>
 
           <el-main  >
             <el-row >
@@ -21,19 +23,25 @@
 
                   <el-col :span="5" >
                     <el-form-item label="BU:">
-                      <el-select v-model="product.BU"  placeholder="BU" style="width: 180px" ></el-select>
+                      <el-select v-model="product.businessUnitId"  placeholder="BU" style="width: 180px"   >
+                        <el-option  v-for="bu in BUList" :key="bu.businessUnitId" :value="bu.businessUnitId" :label="bu.businessUnit"></el-option>
+                      </el-select>
                     </el-form-item>
                   </el-col>
 
                   <el-col :span="5" >
                     <el-form-item label="品牌:">
-                      <el-select v-model="product.brandId"  placeholder="品牌"  > </el-select>
+                      <el-select v-model="product.brandId"  placeholder="品牌"   >
+                        <el-option v-for="brand in brandList" :key="brand.brandId" :value="brand.brandId" :label="brand.brandName"></el-option>
+                      </el-select>
                     </el-form-item>
                   </el-col>
 
                   <el-col :span="5" >
                     <el-form-item label="系列:">
-                      <el-select v-model="product.productCategoryId"  placeholder="系列"   ></el-select>
+                      <el-select v-model="product.productCategoryId"  placeholder="系列"   >
+                        <el-option v-for="productCategory in productCategoryList" :key="productCategory.productCategoryId" :value="productCategory.productCategoryId" :label="productCategory.productCategory"></el-option>
+                      </el-select>
                     </el-form-item>
                     </el-col>
                 </el-row>
@@ -48,7 +56,7 @@
 
                   <el-col :span="5" >
                     <el-form-item label="体积:">
-                      <el-input-number controls-position="right" v-model="product.volume"   > </el-input-number>
+                      <el-input-number controls-position="right" v-model="product.productVolume"   > </el-input-number>
                     </el-form-item>
                   </el-col>
 
@@ -64,7 +72,7 @@
 
                   <el-col :span="5" >
                     <el-form-item label="宽:">
-                      <el-input-number controls-position="right" v-model="product.productCategoryId" > </el-input-number>
+                      <el-input-number controls-position="right" v-model="product.productWidth" > </el-input-number>
                     </el-form-item>
                   </el-col>
 
@@ -96,7 +104,7 @@
                   </el-col>
 
                   <el-col :span="10" >
-                    <el-form-item label="包装内含物">
+                    <el-form-item label="包装内含物:">
                       <el-input  style="display:inline-block;"  v-model="product.productPackageContains" />
                     </el-form-item>
                   </el-col>
@@ -106,13 +114,13 @@
                 <el-row>
                   <el-col :span="5" >
                     <el-form-item label="ODR:">
-                      <el-input-number controls-position="right" v-model="product.ODR"  :step="0.01" > </el-input-number>
+                      <el-input-number controls-position="right" v-model="product.productOrderDefect"  :step="0.01" > </el-input-number>
                     </el-form-item>
                   </el-col>
 
                   <el-col :span="5" >
                     <el-form-item label="U8编码:">
-                      <el-input-number controls-position="right" v-model="product.U8Code" > </el-input-number>
+                      <el-input-number controls-position="right" v-model="product.productU8Code" > </el-input-number>
                     </el-form-item>
                   </el-col>
 
@@ -148,7 +156,7 @@
               </el-col>
 
               <el-col :span="4" style="padding: 50px 120px 0px 0px">
-                <el-button @submit="submit" >编辑/提交</el-button>
+                <el-button @click="submitProduct" >编辑/提交</el-button>
               </el-col>
             </el-row>
           </el-footer>
@@ -180,18 +188,25 @@
               productDescriptionEn: "",
               productGrossweight: 0.0,
               productHeight: 0.0,
+              businessUnit:'',
+              businessUnitId:'',
               productId: 0,
               productLong: 0.0,
               productMaterial: "",
               productModelNumber: "",
               productNetweight: 0.0,
               productPackageContains: "",
+              productVolume:0,
               productWidth: 0.0,
               status: 0,
               userId: 0,
-              U8Code: 0,
-              ODR: 0.0,
-            }
+              productU8Code: 0,
+              productOrderDefect: 0.0,
+            },
+            BUList:[],
+            brandList:[],             //所有品牌
+            productCategoryList:[],   //所有产品系列
+            businessUnitList:[]       //所有部门
           }
       },
       methods:{
@@ -211,23 +226,72 @@
           }
           return isJPG && isLt2M;
         },
-        submit(){
+        submitProduct(){
           console.log("保存产品")
+
+          if(this.product.productId == null || this.product.productId == 0){
+            this.$message("请先查询对应产品编辑后保存")
+            return false;
+          }
+          console.log(this.product.productId)
+          var url = this.HOST +"/product/update/" + this.product.productId
+
+
+
+          this.axios.put(url,{
+            productId: this.product.productId,
+            productModelNumber: this.product.productModelNumber ,
+            businessUnitId: this.product.businessUnitId,
+            brandId: this.product.brandId,
+            productCategoryId:this.product.productCategoryId ,
+            productLong: this.product.productLong,
+            productWidth: this.product.productWidth,
+            productHeight: this.product.productHeight,
+            productVolume: this.product.productVolume,
+            productNetweight: this.product.productNetweight,
+            productGrossweight: this.product.productGrossweight,
+            productMaterial: this.product.productMaterial,
+            productPackageContains: this.product.productPackageContains,
+            productOrderDefect: this.product.productOrderDefect,
+            productU8Code: this.product.productU8Code,
+            productCertification: this.product.productCertification,
+            productDescriptionChs: this.product.productDescriptionChs,
+            productDescriptionEn: this.product.productDescriptionEn,
+            userId: this.product.userId,
+
+          }).then(res =>{
+            if(res.data.code == "200"){
+              this.$message({type: 'info', message: '保存成功'});
+            }
+          }).catch(error => {
+            console.log(error)
+          })
         },
         receiveProductInfo(data){
-
           //先清除数据
           this.product = null
 
-          this.product = data
-          console.log("productForm")
-          console.log(data)
+          this.product = data.productDetails //产品信息
+          this.brandList = data.brandList
+          this.productCategoryList = data.productCategoryList
+          this.businessUnitList = data.businessUnitList
 
-          if(this.product == null){
-            //查询不到数据 给提示
+          console.log("product save store")
+          //将product对象存入到 store中
+          this.$store.commit("setProduct",data.productDetails)
 
+
+
+          //存在商品返回的是object类型 不存在返回string
+          if(typeof(data) == "string"){
+            this.$message(data);
+
+            return
           }
+        },receiveBUList(data){
+          this.BUList = data
         }
+
 
       }
     }

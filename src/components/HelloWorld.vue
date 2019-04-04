@@ -8,10 +8,10 @@
 
    <!-- <SearchBar ref="searchBar" @sendSearchResult="receiveSearchResult"></SearchBar>-->
 
-    <ProductForm ref="productForm"></ProductForm>
+    <ProductForm ref="productForm" ></ProductForm>
     <br>
     <!--产品相关联信息操作-->
-    <Tabs ref="tabs"></Tabs>
+    <Tabs ref="tabs" ></Tabs>
   </div>
 
 </template>
@@ -82,7 +82,7 @@
     },
       receiveSearchResult(data){
 
-      }
+      },
 
   }
 }
