@@ -108,6 +108,8 @@
       methods:{
         init(){
           console.log("img init method")
+          //第一次进去默认选中一个
+          $("#1").css("background-color","#409efb").css("color","#FFF")
           this.searchImg(this.$store.state.product.productId,this.imgTypeId)
         },searchImg(productId,typeId){
 
@@ -239,6 +241,12 @@
         },
         chooseImgType(id){
           console.log(id)
+
+          //每次点击高亮 其他兄弟节点失去高亮
+          $("#"+id).css("background-color","#409efb").css("color","#FFF")
+          $("#"+id).siblings().css("background-color","#FFF").css("color","#606266")
+
+
           this.params.typeId =id
           this.searchImg(this.$store.state.product.productId,id)
         },
@@ -281,8 +289,7 @@
 
 
           }else{  //取消删除
-
-            this.init()
+            this.searchImg(this.$store.state.product.productId,this.imgTypeId)
           }
           //清除删除list
           this.delImgList = []

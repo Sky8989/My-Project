@@ -26,8 +26,11 @@ import store from './store'
 import Tabs from './components/product/Tabs'
 import uploadFile from './components/uploadFile'
 
+import $ from 'jquery'
+Vue.prototype.$ = $;
 //解决跨域
 Vue.prototype.HOST = '/api'
+
 Vue.prototype.axios = axios;
 Vue.prototype.qs = qs;
 

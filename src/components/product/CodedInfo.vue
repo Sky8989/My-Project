@@ -139,7 +139,7 @@
       <el-table name="SupplierList" :data="codedInfoList" height="250px" border="border">
 
 <!--        :filter-method="filter_select_model" label="model" :filters="[{text:'1',value:'1'},{text:'2',value:'2'}]"-->
-        <el-table-column prop="model" label="model" filter-method="filter_select_model" :filters="[{text:'1',value:'1'},{text:'2',value:'2'}]">
+        <el-table-column prop="model" label="model" :filter-method="filterModel" :filters="filterModelList">
           <!--<template slot="header" slot-scope="scope">
           <el-select placeholder="Model" size="small" v-model="select_model" >
             <el-option value="1">1</el-option>
@@ -214,7 +214,7 @@
           </template>-->
         </el-table-column>
 
-        <el-table-column prop="transportType" label="发货方式" :filters="transportTypeList" :filter-method="FilterTransportType">
+        <el-table-column prop="transportType" label="发货方式" :filters="transportTypeList" :filter-method="filterTransportType">
           <!--<template slot="header" slot-scope="scope">
           <el-select placeholder="发货方式" size="small" v-model="select_transportType">
             <el-option value="FBA">FBA</el-option>
@@ -266,30 +266,53 @@
               UPC:'',
               transportType:'',
               skuOrFnsku:'',
-            }
+            },
+            filterModelList:[{text:'1',value:'1'},{text:'2',value:'2'}],
+            filterSeller:[],
+            partNoList:[],
+            countryList:[],
+            transportTypeList:[],
 
           }
       },methods:{
           init(){
-
+            this.searchCodedInfo(this.$store.state.product.productId)
           },
+        searchCodedInfo(productId){
 
-        filter_select_model(value,row,column){
+            var url = this.HOST + "/productCoded/findProductCodeInformationByProductId"
 
-          console.log(value)
-          console.log(row)
-          console.log(column)
+          this.axios.get(url,{
 
-          return row.model == value
+          }).then(res => {
+            if(res.data.code == "200"){
+              console.log(res.data.data)
+            }
+          }).catch(error => {
+            console.log(error)
+          })
         },
-        change_select_seller(event){
-          console.log(event)
-        },submitCodedInfo(){
+        submitCodedInfo(){
           this.addCodedInfo = false
           console.log("添加编码信息")
         },
         search(){
           console.log("提交搜索信息")
+        },
+        filterModel(value,row){
+          return row.model == value
+        },
+        filterSeller(value,row){
+          return row.seller == value
+        },
+        filterPartNo(value,row){
+          return row.partNo == value
+        },
+        filterCountry(value,row){
+          return row.country == value
+        },
+        filterTransportType(value,row){
+          return row.transportType == value
         },
       }
     }

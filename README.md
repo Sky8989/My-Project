@@ -52,3 +52,5 @@ For a detailed explanation on how things work, check out the [guide](http://vuej
       
     
     
+###引入jquery
+https://www.jianshu.com/p/c0ff07046008
