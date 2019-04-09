@@ -6,7 +6,7 @@
        </el-col>
      </el-row>
 
-      <el-dialog title="新增供应商+" :visible.sync="addSupplier" style="width: auto; height: auto;">
+      <el-dialog title="新增/编辑供应商+" :visible.sync="addSupplier" style="width: auto; height: auto;" @closed="closeDialog">
 
         <el-form label-width="90px" :model="form" :label-position="LabelPosition">
 
@@ -127,7 +127,7 @@
         <el-table-column prop="productSupplierRecordUser" label="记录人" ></el-table-column>
         <el-table-column prop="uTime" label="更新时间" ></el-table-column>
         <el-table-column prop="remark" label="备注" ></el-table-column>
-        <el-table-column prop="edit" label="编辑"   ><el-button  type="text" @click="addSupplier = true" >编辑</el-button></el-table-column>
+        <el-table-column prop="edit" label="编辑"   ><el-button  @click="addSupplier = true" >编辑</el-button></el-table-column>
 
       </el-table>
 
@@ -242,6 +242,13 @@
         },
         searchSupplier(productId){
           console.log("===searchSupplier")
+
+
+          if(productId == null || productId == ''){
+            this.$message("请先选择产品")
+            return false
+          }
+
           console.log(productId)
           var url = this.HOST +"/productSupplier/findProductSupplier/" + productId
 
@@ -288,7 +295,27 @@
 
           /*console.log(column)*/
 
+        },
+        closeDialog(){
+        console.log("closeDialog 关闭回调")
+        this.form = {
+          supplierId:0,
+          supplierName:'',
+          address:'',
+          contact:'',
+          contactPhone:'',
+          contactMail:'',
+          productionCosts:'',
+          MOQ:'',
+          capactity:'',
+          minCartonQuantity:'',
+          transactionCurrency:'',
+          principalUser:'',
+          recordUser:'',
+          uTime:'',
+          remark:''
         }
+      }
 
       }
     }

@@ -22,7 +22,8 @@
               ref="upload"
               name="files"
               class="upload-demo"
-              multiple :limit="5"
+              multiple :limit="10"
+              :on-exceed="uploadExceed"
               :action="action"
               :before-upload="beforeUploadPicture"
               :on-preview="handlePreview"
@@ -44,6 +45,30 @@
         </el-col>
 
       </el-row>
+
+
+
+      <el-dialog
+        title="需要删除以下文档"
+        :visible.sync="deleteDialog"
+        width="80%">
+        <el-upload
+          :action="action"
+          :auto-upload="false"
+          :file-list="delShowDocList"
+          list-type="picture-card" style="height: auto">
+        </el-upload>
+
+        <el-dialog :visible.sync="dialogVisible">
+          <img width="100%" :src="dialogImageUrl" alt="">
+        </el-dialog>
+
+        <span slot="footer" class="dialog-footer">
+    <el-button @click="delDocs(false)">取 消</el-button>
+    <el-button type="primary" @click="delDocs(true)">确 定</el-button>
+      </span>
+      </el-dialog>
+
     </div>
 </template>
 
@@ -52,45 +77,42 @@
         name: "Document",
       data(){
           return{
+            deleteDialog:false,
+            dialogVisible:false,
+            uploadComplete:false, //上传完成的状态
+            dialogImageUrl:'',
             params:{
               productId:0,
               typeId:1, //默认为第一个
             },
+
             fileType:'DOCUMENT',
             action:this.HOST + "/productFile/saveFiles",
             docTypeId:1,
             delShowDocList:[], //删除 文件展示列表
             delDocList:[], //删除文档id列表
-            fileList: [
-              /*{name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'},
-              {name: 'food2.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'},
-              {name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'},
-              {name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'},
-              {name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'},
-              {name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'},
-              {name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'},
-              {name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'},
-              {name: 'food.jpeg', url: 'https://fuss10.elemecdn.com/3/63/4e7f3a15429bfda99bce42a18cdd1jpeg.jpeg?imageMogr2/thumbnail/360x360/format/webp/quality/100'}*/
-              ],
+            fileList: [],
 
           }
       },
       methods:{
           init(){
             console.log("doc init method")
+
+            this.buttonChecked(1)
             this.searchDocument(this.$store.state.product.productId,this.docTypeId)
           },
         searchDocument(productId,typeId){
           //查询前先初始化
-          this.fileList = []
-          this.delShowDocList = []
-          this.delDocList = []
-
 
           if(productId == null || productId == ''){
             this.$message("请先选择产品")
             return false
           }
+
+          this.fileList = []
+          this.delShowDocList = []
+          this.delDocList = []
 
           var data = {
             'productId':productId,
@@ -120,9 +142,20 @@
           })
 
         },
+        uploadExceed(file,fileList){
+          console.log("uploadExceed")
+          this.$message.warning(`当前限制选择 10 个文件，本次选择了 ${file.length} 个文件，共选择了 ${file.length + fileList.length} 个文件`);
+
+        },
         handleRemove(file, fileList){
           console.log("移除文档")
-          console.log(file, fileList);
+          console.log(file);
+          this.delDocList.push(file.productDocumentId)
+          var data = {url : file.url,name:file.name,id:file.productDocumentId}
+          this.delShowDocList.push(data)
+
+          console.log(this.delDocList)
+          console.log(this.delShowDocList)
         },
         handlePreview(file){
           console.log("图片预览")
@@ -156,6 +189,60 @@
             this.params.docTypeId = typeId
 
           this.init()
+
+        },
+        buttonChecked(id){
+          $("#"+id).css("background-color","#409efb").css("color","#FFF")
+          $("#"+id).siblings().css("background-color","#FFF").css("color","#606266")
+
+          this.docTypeId = id
+        },
+        delDocs(flag){
+
+          if(this.delDocList == null){
+            this.$message.warning("请先选择需要删除的图片")
+            this.deleteDialog = false
+            return false;
+          }
+
+          this.deleteDialog = true
+
+          console.log(this.delShowDocList.toString())
+          console.log(this.delDocList.toString())
+          if(flag){//删除操作
+            var url = this.HOST + "/productFile/dropFiles"
+            var data = {
+              fileIds:this.delDocList.toString(),
+              fileType:this.fileType,
+            }
+
+            console.log("需要删除的文档 类型 ")
+            console.log(data.fileType)
+            this.axios({
+              method:'post',
+              url:url,
+              data: this.qs.stringify(data),
+
+            }).then(res => {
+              if(res.data.code == "200"){
+                console.log(res.data.data)
+                //删除成功后返回 剩下的数据
+                this.fileList = res.data.data
+                this.$message.success("删除成功")
+              }
+            }).catch(error => {
+              console.log(error)
+            })
+
+
+          }else{  //取消删除
+            this.searchDocument(this.$store.state.product.productId,this.imgTypeId)
+          }
+          //清除删除list
+          this.delDocList = []
+          this.delShowDocList = []
+
+          this.deleteDialog = false
 
         }
 

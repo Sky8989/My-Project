@@ -1,13 +1,13 @@
 <template>
     <div id="Principal">
       <el-button style="float: left" @click="addPrincipalMethod">新增</el-button>
-      <el-dialog title="新增记录/编辑"  :visible.sync="addPrincipal" style="width: auto; height: auto">
+      <el-dialog title="新增记录/编辑"  :visible.sync="addPrincipal" style="width: auto; height: auto" @closed="closeDialog">
         <el-form :model="form" label-width="90px" :label-position="labelPosition">
 
           <el-row >
             <el-col :span="6">
               <el-form-item label="产品型号:">
-                <span>{{form.modelNumber}}</span>
+                <span>{{this.$store.state.product.productModelNumber}}</span>
               </el-form-item>
             </el-col>
 
@@ -105,7 +105,6 @@
             addPrincipal:false,
             principalList:[],
               form:{
-                modelNumber:'',
                 deptName:'',
                 BU:'',
                 BuId:0,
@@ -128,6 +127,11 @@
           },
         searchPrincipal(productId){
 
+          if(productId == null || productId == ''){
+            this.$message("请先选择产品")
+            return false
+          }
+
             var url = this.HOST + "/findProductCharge/findProductUserChargeByProductId/" + productId
             this.axios.get(url,{
 
@@ -135,7 +139,7 @@
               if(res.data.code == "200"){
                 console.log(res.data.data)
                 this.principalList = res.data.data
-                return res.data.data
+               // return res.data.data
               }
             }).catch(error => {
               console.log(error)
@@ -220,6 +224,7 @@
             if(res.data.code == '200'){
               console.log(res.data.data)
               this.countryList = res.data.data
+
             }
           }).catch(error => {
             console.log(error)
@@ -275,7 +280,6 @@
 
           this.addPrincipal = true
           var product = this.$store.state.product;
-          this.form.modelNumber = product.productModelNumber
           this.form.productCategory = product.productCategory
           this.form.BU = principalList.businessUnit
           this.form.BuId = principalList.businessUnitId
@@ -288,10 +292,25 @@
               this.form.country = row.countryId
               this.form.oldCountryId = row.countryId
               this.form.asin = row.asin
+              this.remark = row.remark
               //编辑时需要加载asin
               //  this.findProductAsinByProductIdAndCountryId(this.$store.state.product.productId,this.form.country);
             }
 
+        },closeDialog(){
+          console.log("closeDialog 关闭回调")
+          this.form = {
+            deptName:'',
+            BU:'',
+            BuId:0,
+            deptUser:'',
+            productCategory:'',
+            country:'',
+            oldCountryId:0,
+            asin:'',
+            deptUserId:0,
+            remark:'',
+          }
         }
 
 

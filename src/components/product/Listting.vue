@@ -1,7 +1,7 @@
 <template>
   <div id="Listting">
     <el-button style="float: left" @click="addListting = true">新增记录</el-button>
-    <el-dialog title="新增记录/编辑"  :visible.sync="addListting" style="width: auto; height: auto">
+    <el-dialog title="新增记录/编辑"  :visible.sync="addListting" style="width: auto; height: auto" @closed="closeDialog">
 
       <el-form :model="form"  label-width="80px" :label-position="labelPosition" >
 
@@ -10,7 +10,7 @@
         <el-row :gutter="20">
           <el-col :span="8">
             <el-form-item label="产品型号:">
-              <span>{{form.modelNumber}}</span>
+              <span>{{this.$store.state.product.productModelNumber}}</span>
             </el-form-item>
           </el-col>
         </el-row>
@@ -122,7 +122,6 @@
             addListting: false,
             form:{
               listingEventId:'',
-              modelNumber:this.$store.state.product.productModelNumber,
               seller:'',
               country:'',
               eventTime:'',
@@ -142,6 +141,12 @@
           },
         searchListting(productId){
           console.log("===searchListting")
+
+          if(productId == null || productId == ''){
+            this.$message("请先选择产品")
+            return false
+          }
+
           console.log(productId)
             var url = this.HOST + "/productListingEvent/findByProductId/" +productId
             var method = "get"
@@ -202,7 +207,6 @@
           }).then(res => {
               if(res.data.code == "200"){
                 this.$message(res.data.data.msg);
-               // this.form = null;
 
               }
 
@@ -210,7 +214,6 @@
                 console.log(error)
           })
 
-          this.form = {}
           this.addListting = false
 
 
@@ -233,6 +236,17 @@
           this.form.recordUser = row.productListingEventRecordUser
            // this.form.uTime = row.cTime
 
+        },closeDialog(){
+            console.log("closeDialog 关闭回调")
+          this.form = {
+            listingEventId:'',
+            seller:'',
+            country:'',
+            eventTime:'',
+            listtingEvent:'',
+            processingRecord:'',
+
+          }
         }
 
 

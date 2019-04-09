@@ -13,7 +13,7 @@
 
           <el-main  >
             <el-row >
-              <el-col :span="20" id="left">
+              <el-col :span="18" id="left">
                 <el-row>
                   <el-col :span="5" >
                     <el-form-item label="型号:">
@@ -130,36 +130,32 @@
 
               <!--居中操作-->
               <!--position:fixed;top:50%;left:80%;margin-left:-100px;margin-top:-150px;-->
-              <el-col id="right" :span="4"  style=" padding: 100px 100px 0px 0px  ">
-                <el-upload
-                  class="avatar-uploader"
-                  action="https://jsonplaceholder.typicode.com/posts/"
-                  :show-file-list="false"
-                  :on-success="handleAvatarSuccess"
-                  :before-upload="beforeAvatarUpload">
-                  <img v-if="imageUrl" :src="imageUrl" class="avatar">
-                  <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                </el-upload>
+              <el-col id="right" :span="5"  style="padding: 1px 0px 0px 0px  ">
+                  <img v-if="imageUrl" :src="imageUrl" class="avatar" style="width: 300px;height:400px">
+              </el-col>
+
+
+            </el-row>
+
+            <el-row>
+              <el-col :span="18">
+                <el-input  style="display:inline-block; width: 90px; float: left"  value="产品描述" />
+                <el-input type="textarea" v-model="product.productDescriptionChs" :autosize="{minRows:4,maxRows:6}" placeholder="中文描述"></el-input>
+                <el-input type="textarea" v-model="product.productDescriptionEn" :autosize="{minRows:4,maxRows:6}" placeholder="英文描述"></el-input>
+              </el-col>
+
+              <el-col :span="6" style="padding: 50px 120px 0px 0px">
+                <el-button @click="submitProduct" >编辑/提交</el-button>
               </el-col>
             </el-row>
 
           </el-main>
 
 
-          <el-footer id="footer" style="height: auto; padding: 0px 0px 5px 10px">
+         <!-- <el-footer id="footer" style="height: auto; padding: 0px 0px 5px 10px">
 
-            <el-row>
-              <el-col :span="20">
-                <el-input  style="display:inline-block; width: 90px; float: left"  value="产品描述" />
-                <el-input type="textarea" v-model="product.productDescriptionChs" :autosize="{minRows:4,maxRows:6}" placeholder="中文描述"></el-input>
-                <el-input type="textarea" v-model="product.productDescriptionEn" :autosize="{minRows:4,maxRows:6}" placeholder="英文描述"></el-input>
-              </el-col>
 
-              <el-col :span="4" style="padding: 50px 120px 0px 0px">
-                <el-button @click="submitProduct" >编辑/提交</el-button>
-              </el-col>
-            </el-row>
-          </el-footer>
+          </el-footer>-->
 
 
         </el-container>
@@ -177,10 +173,9 @@
       data(){
           return{
             labelPosition:'right',
-            imageUrl:"",
+            imageUrl:'http://192.168.1.68:10021/static/IMAGE/2019.4/93340965c78f4639aee78bafe0b4058d.jpg',
             product:{
               brandId: 0,
-              businessUnitId: 0,
               cTime: null,
               productCategoryId: 0,
               productCertification: "",
@@ -189,7 +184,7 @@
               productGrossweight: 0.0,
               productHeight: 0.0,
               businessUnit:'',
-              businessUnitId:'',
+              businessUnitId: 0,
               productId: 0,
               productLong: 0.0,
               productMaterial: "",

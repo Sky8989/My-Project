@@ -28,13 +28,14 @@
             class="upload-demo"
             ref="upload"
             name="files"
+            multiple
+            :limit="10"
+            :on-exceed="uploadExceed"
             :before-upload="beforeUploadPicture"
             :on-preview="handlePictureCardPreview"
             :on-remove="handleRemove"
             :on-success="onSuccess"
-            :on-error="uploadError"
             :action="action"
-            :size="1024 * 1024 * 10"
             :auto-upload="false"
             :file-list="fileList"
             :data="params"
@@ -53,7 +54,7 @@
       <el-col :span="4" name="option" style="padding: 230px 0px 0px 0px">
         <!--<el-button size="" type="primary">上传图片</el-button>-->
         <el-button size="small" type="primary" @click="submitUpload">点击上传</el-button>
-        <el-button size="small">下载</el-button>
+        <el-button size="small" @click="download">下载</el-button>
         <el-button size="small" type="danger" @click="deleteDialog = true">删除</el-button>
       </el-col>
     </el-row>
@@ -62,14 +63,32 @@
 
 
     <el-dialog
-      title="删除图片"
+      title="需要删除以下图片"
       :visible.sync="deleteDialog"
-      width="30%">
-      <img  v-for="img in delShowImgList" :src="img.url" />
+      width="80%">
+      <el-upload
+        name="file"
+        multiple
+        :limit="10"
+        :on-exceed="uploadExceed"
+        :before-upload="beforeUploadPicture"
+        :on-preview="handlePictureCardPreview"
+        :on-remove="handleRemove"
+        :on-success="onSuccess"
+        :action="action"
+        :auto-upload="false"
+        :file-list="delShowImgList"
+        list-type="picture-card" style="height: auto">
+      </el-upload>
+
+     <!-- <el-dialog :visible.sync="dialogVisible">
+        <img width="100%" :src="dialogImageUrl" alt="">
+      </el-dialog>-->
+
       <span slot="footer" class="dialog-footer">
     <el-button @click="delImgs(false)">取 消</el-button>
     <el-button type="primary" @click="delImgs(true)">确 定</el-button>
-    </span>
+      </span>
     </el-dialog>
 
   </div>
@@ -84,6 +103,7 @@
         name: "ImageUpload",
       data(){
           return{
+            multiple:true,
             fileType:'IMAGE',
             deleteDialog:false, //是否显示删除对话框
             delImgList:[],      //删除图片的id列表
@@ -109,11 +129,13 @@
         init(){
           console.log("img init method")
           //第一次进去默认选中一个
-          $("#1").css("background-color","#409efb").css("color","#FFF")
+          this.buttonChecked(1)
           this.searchImg(this.$store.state.product.productId,this.imgTypeId)
+
         },searchImg(productId,typeId){
 
           //查询前先初始化
+        //  $(".upload-demo ul").hide()
           this.fileList = []
           this.delShowImgList = []
           this.delImgList = []
@@ -129,6 +151,7 @@
             'typeId':typeId,
             'fileType':this.fileType,
           }
+          console.log(data.fileType)
 
           var url = this.HOST + "/productFile/findByProductIdAndTypeId"
           this.axios({
@@ -145,6 +168,7 @@
               //渲染图片
               // this.fileList = res.data.data
               this.fileList = res.data.data
+            //  $(".upload-demo ul").show()
 
             }
           }).catch(error =>{
@@ -152,7 +176,9 @@
           })
         },
         submitUpload() {
+
           this.$refs.upload.submit();
+
         },
         // 移除图片
         handleRemove(file, fileList){
@@ -160,10 +186,11 @@
           console.log(file);
           //将需要删除图片 存入list中
           this.delImgList.push(file.productImgId)
-          this.delShowImgList.push(file.url)
-         console.log(typeof(this.delImgList))
-         console.log(this.delImgList)
+          var data = {url : file.url,id:file.productImgId}
+          this.delShowImgList.push(data)
 
+         console.log(this.delImgList)
+         console.log(this.delShowImgList)
 
           // this.fileChange(fileList);
         },
@@ -181,78 +208,52 @@
         // 图片上传成功后，后台返回图片的路径
       onSuccess:function(res,file,fileList){
           console.log("图片上传成功后，后台返回图片的路径")
-        console.log(res)
+
         if(res.code == "200"){
-
-
-          var imgList = res.data.saveImgOrDocument
-
-
+          var imgList = res.data
           this.fileList = imgList
+         // this.$refs.upload.status = 1
           console.log(this.fileList)
         }
         this.uploadComplete = true;
+
        // this.fileChange(fileList)
         },
 
-        //设置photo值
-       /* fileChange(fileList) {
-          console.log("设置photo值")
-          let temp_str = '';
-          if(fileList.length > 0){
-            for(let i=0; i<fileList.length; i++){
-              if(fileList[i].response){
-                if(fileList[i].response.code === 0){
-                  if(i===0){
-                    temp_str += fileList[i].response.data;
-                  } else {
-                    // 最终photo的格式是所有已上传的图片的url拼接的字符串（逗号隔开）
-                    temp_str += ',' + fileList[i].response.data;
-                  }
-                }
-              }
-            }
-          }
-          this.photo = temp_str;
-        },*/
         // 图片预览
         handlePictureCardPreview(file) {
           console.log("图片预览")
           this.dialogImageUrl = file.url;
           this.dialogVisible = true;
 
-          /*this.$confirm('您确定要将文件下载？, 是否继续?', '提示', {
-            confirmButtonText: '确定',
-            cancelButtonText: '取消',
-            type: 'warning'
-          }).then(() => {
-            console.log('file:' + file.url.substring(0, 4))
-            if (file.url.substring(0, 5) === 'blob:') {
-              this.$confirm('请保存信息后再下载！', '提示', {
-                confirmButtonText: '确定',
-                cancelButtonText: '取消',
-                type: 'warning'
-              })
-              return false;
-            } else {
-            //  document.location.href = process.env.BASE_API + '/api/photoUpload/imgDownload?filePath=' + file.url + '&fileName=' + file.name;
-            }
-          });*/
+
+        },
+        uploadExceed(file,fileList){
+          console.log("uploadExceed")
+          this.$message.warning(`当前限制选择 10 个文件，本次选择了 ${file.length} 个文件，共选择了 ${file.length + fileList.length} 个文件`);
+
         },
         chooseImgType(id){
           console.log(id)
 
+          //切换时清除
+         // this.$refs.upload.clearFiles()
           //每次点击高亮 其他兄弟节点失去高亮
-          $("#"+id).css("background-color","#409efb").css("color","#FFF")
-          $("#"+id).siblings().css("background-color","#FFF").css("color","#606266")
+          this.buttonChecked(id)
 
 
           this.params.typeId =id
           this.searchImg(this.$store.state.product.productId,id)
         },
+        buttonChecked(id){
+          $("#"+id).css("background-color","#409efb").css("color","#FFF")
+          $("#"+id).siblings().css("background-color","#FFF").css("color","#606266")
 
+          //设置id
+          this.imgTypeId = id
+        }
+        ,
         delImgs(flag){
-
 
           if(this.delImgList == null){
             this.$message.warning("请先选择需要删除的图片")
@@ -262,6 +263,7 @@
 
           this.deleteDialog = true
 
+          console.log(this.delShowImgList.toString())
           if(flag){//删除操作
             var url = this.HOST + "/productFile/dropFiles"
             var data = {
@@ -269,12 +271,12 @@
               fileType:this.fileType,
             }
 
-            console.log("需要删除的图片 ")
-            console.log(data.fileIds)
+            console.log("需要删除的图片 类型 ")
+            console.log(data.fileType)
             this.axios({
               method:'post',
               url:url,
-              data: data,
+              data: this.qs.stringify(data),
 
             }).then(res => {
               if(res.data.code == "200"){
@@ -299,7 +301,47 @@
 
 
 
-        }
+        },download(){
+          console.log("download")
+          //包含上传的文件信息和服务端返回的所有信息都在这个对象里
+          console.log(this.$refs.upload.uploadFiles)
+
+          var url = this.$refs.upload.uploadFiles[0].url
+
+          this.$confirm('您确定要将文件下载？, 是否继续?', '提示', {
+           confirmButtonText: '确定',
+           cancelButtonText: '取消',
+           type: 'warning'
+         }).then(() => {
+          // console.log('file:' + url.substring(0, 4))
+
+            open(url)
+
+          // this.downloadIamge(url,"")
+         });
+
+        },
+        downloadIamge(imgsrc, name) {//下载图片地址和图片名
+          var image = new Image();
+          // 解决跨域 Canvas 污染问题
+         image.setAttribute("crossOrigin", "anonymous");
+          image.onload = function() {
+            var canvas = document.createElement("canvas");
+            canvas.width = image.width;
+            canvas.height = image.height;
+            var context = canvas.getContext("2d");
+            context.drawImage(image, 0, 0, image.width, image.height);
+            var url = canvas.toDataURL("image/png"); //得到图片的base64编码数据
+              console.log(url)
+              console.log(name)
+            var a = document.createElement("a"); // 生成一个a元素
+            var event = new MouseEvent("click"); // 创建一个单击事件
+            a.download = name || "photo"; // 设置图片名称
+            a.href = url; // 将生成的URL设置为a.href属性
+            a.dispatchEvent(event); // 触发a的单击事件
+          };
+          image.src = imgsrc;
+        },
 
       }
 

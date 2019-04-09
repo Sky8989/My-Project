@@ -51,7 +51,8 @@ Vue.use(uploadFile);
 
 
 //axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded';
-axios.interceptors.request.use(function(config) {
+
+/*axios.interceptors.request.use(function(config) {
 
   if (config.method == "post") {
     config.data = qs.stringify(config.data)
@@ -61,7 +62,7 @@ axios.interceptors.request.use(function(config) {
 }, function(error) {
   // 对请求错误做些什么
   return Promise.reject(error);
-});
+});*/
 
 
 /* eslint-disable no-new */

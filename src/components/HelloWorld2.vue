@@ -37,8 +37,6 @@
 
       <el-table-column sortable fixed="left" prop="name" label="姓名" width="180">          </el-table-column>
 
-               
-
 
 
 

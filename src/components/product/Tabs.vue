@@ -5,7 +5,7 @@
         <el-col :span="24" >
 
           <el-tabs v-model="activeName" type="border-card" @tab-click="handleClick" style="height: auto;">
-            <el-tab-pane label="图片" name="图片">
+            <el-tab-pane label="图片" name="图片" id="img">
               <!--引用 ImageUpload 组件 引用的名称小写多个字母用中划线分割(-)-->
               <ImageUpload ref="imageUpload"></ImageUpload>
             </el-tab-pane>
@@ -15,7 +15,7 @@
             </el-tab-pane>
 
             <el-tab-pane label="负责人列表" name="负责人列表">
-              <Principal ref="principal"></Principal>
+              <Principal ref="principal" ></Principal>
             </el-tab-pane>
 
             <el-tab-pane label="listing事件记录" name="listing事件记录">
@@ -62,8 +62,14 @@
       components: {Listting, Document, ImageUpload,Principal,Supplier,CodedInfo},
       data(){
           return{
-            activeName: 'first',
+            activeName: '',
+            countrys:[],
           }
+      },
+      mounted(){
+          //默认加载图片
+          // this.activeName = systems[0].id
+          this.activeName = "img"
       },
       methods:{
         handleClick(tab, event) {
@@ -87,17 +93,14 @@
             // this.$refs.listting.init()
           }
           else if(tabName == "编码信息表"){
-            // this.$refs.listting.init()
+            this.$refs.codedInfo.init()
           }
           else if(tabName == "其他"){
             // this.$refs.listting.init()
           }
-
-
-
-
         },
-        clickListting(){
+        getCountrys(data){
+          this.countrys = data
 
         }
       }

@@ -3,10 +3,10 @@
       <el-form id="searchForm">
         <el-row :gutter="10" >
           <el-col :span="3">
-            <el-select  placeholder="Model/ASIN/SKU" v-model="searchfield">
-              <el-option label="Model" value="model"></el-option>
+            <el-select  placeholder="Model/ASIN/SKU" v-model="searchfield" class="placeholder">
+              <b><el-option label="Model" value="model"></el-option>
               <el-option label="ASIN" value="asin"></el-option>
-              <el-option label="SKU" value="sku"></el-option>
+              <el-option label="SKU" value="sku"></el-option></b>
             </el-select>
           </el-col>
           &nbsp;&nbsp;
@@ -17,7 +17,7 @@
         <el-row :gutter="10">
           <el-col :span="3">
             <el-select v-model="BU"  placeholder="BU" @change="chooseBU">
-              <el-option  v-for="bu in BUList" :key="bu.businessUnitId" :value="bu.businessUnitId" :label="bu.businessUnit"></el-option>
+              <el-option  v-for="bu in BUList" :key="bu.businessUnitId" :value="bu.businessUnitId" :label="bu.businessUnit" ></el-option>
 
             </el-select>
           </el-col>
@@ -196,6 +196,12 @@
     }
 </script>
 
-<style scoped>
+<style >
+  /*.placeholder input::-webkit-input-placeholder{
+    color:black;
+  }*/
 
+  *{
+    color:black;
+  }
 </style>

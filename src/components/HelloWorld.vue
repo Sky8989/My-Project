@@ -3,7 +3,13 @@
   <div id="app">
 
     <el-row :gutter="10">
-      <el-col :span="5"> <el-input value="产品基础信息" style="width:150px; float: left;"/> </el-col>
+      <el-col :span="5">
+        <b>
+          <!--<el-input  style="width:144px; float: left; color:black" disabled >产品基础信息</el-input>-->
+          <!--<input value="产品基础信息" style="width:144px; float: left; color:black" disabled >-->
+          <span style="width:144px; float: left; ">产品基础信息</span>
+        </b>
+      </el-col>
     </el-row>
 
    <!-- <SearchBar ref="searchBar" @sendSearchResult="receiveSearchResult"></SearchBar>-->
@@ -80,9 +86,6 @@
     handlePreview(file) {
       console.log(file);
     },
-      receiveSearchResult(data){
-
-      },
 
   }
 }
@@ -114,5 +117,7 @@
     height: 178px;
     display: block;
   }
+
+
 </style>
 
